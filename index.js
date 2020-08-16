@@ -1,116 +1,42 @@
-const TelegramBot=require('node-telegram-bot-api')
-const TOKEN='1363961260:AAEqUsw2yqfnWdM5SQmBcB9frTw3Myc_3AA'
-const fetch=require('node-fetch');
-const fs = require('fs')
-const text=require('./Model/text')
+require('dotenv').config({ path: './env/.env.dev' });  //comment out this line before deploying to prod
+// require('dotenv').config({ path: './env/.env.prod.yaml' });
 
+const bot = require('./init/bot');
+const handleTextRequests = require('./controllers/handleTextRequests');
+const handleUnexpectedRequests = require('./controllers/handleUnexpectedRequests');
 
-const bot = new TelegramBot(TOKEN, {
-    polling: {
-        interval: 300, 
-        autostart: true,
-        params:{
-            timeout: 10
-        }
-    }
-})//newTelegramBot
-bot.on('message', (msg) => {
-    const {id} = msg.chat
+//TODO provide a helpful help
+bot.help((context) => {
+    context.reply('A placeholder for the help guide');
+});
 
-    if(msg.text==="/start"){
-        bot.sendMessage(id, 'Hello, '+msg.from.first_name+'! What do you want to learn about today?',{
-            reply_markup:{
-                inline_keyboard: [
-                   
-                    [
-                        {
-                            text: "The Stars",
-                            callback_data: 'TS'
-                        }
-                    ],
-                    [
-                        {
-                            text: "The Planets",
-                            callback_data: 'TP'
-                        }
-                    ],
-                    [
-                        {
-                            text: "Deep Space",
-                            callback_data: 'DS'
-                        }
-                    ],
-                    [
-                        {
-                            text: "Studying the Universe",
-                            callback_data: 'SU'
-                        }
-                    ],
-                    [
-                        {
-                            text: "Astronomy Tools",
-                            callback_data: 'AT'
-                        }
-                    ],
-                    [
-                        {
-                            text: "Why Study Astronomy?",
-                            callback_data: 'WSA'
-                        }
-                    ],
-                    [
-                        {
-                            text: "Nasa Picture of the Day",
-                            callback_data: 'NASA'
-                        }
-                    ]
-                ]
-            }
+//Handle text messages
+bot.on('text', (context) => {
+    handleTextRequests(context);
+});
+
+//avoid timeouts with unsupported commands
+bot.on('message', context => {
+    handleUnexpectedRequests(context);
+});
+
+const ENV = process.env.ENV;
+
+if (ENV === "development") {
+    bot.launch().then(r => {
+        console.log(r);
+    })
+} else if (ENV === "production") {
+    bot.telegram
+        //FUNCTION_TARGET is reserved Google Cloud Env
+        .setWebhook(`https://${process.env.GOOGLE_CLOUD_REGION}-${process.env.GOOGLE_CLOUD_PROJECT_ID}.cloudfunctions.net/${process.env.FUNCTION_TARGET}`)
+        .then(r => {
+            console.log(r);
         })
 
-bot.on('callback_query',query =>{
-if(query.data =='TS'){
-    bot.sendMessage(id, text.TheStarsText)
-    bot.sendPhoto(id, './View/TheStars.jpeg')
-}else if(query.data =='TP'){
-    bot.sendMessage(id, text.ThePlanetsText)
-    bot.sendPhoto(id,'./View/ThePlanets.jpeg')
-}else if(query.data =='DS'){
-    bot.sendMessage(id, text.DeepSpaceText)
-    bot.sendPhoto(id, './View/DeepSpace.jpg')
-}else if(query.data =='SU'){
-    bot.sendMessage(id, text.StudyingTheUniversetext)
-    bot.sendPhoto(id, './View/StudyingTheUniverse.jpg')
-}else if(query.data =='AT'){
-    bot.sendMessage(id, text.AstronomyToolsText)
-    bot.sendPhoto(id, './View/AstronomyTools.jpg')
-}else if(query.data =='WSA'){
-    bot.sendMessage(id,text.WhyStudyAstronomytext)
-    bot.sendPhoto(id, './View/WhyStudyAstronomy.jpg')
-}else if(query.data == 'NASA'){
-    PicOfTheDay()
+    exports.telegramBotWebhook = (req, res) => {
+        bot.handleUpdate(req.body, res);
+    };
+} else {
+    throw new Error("Unknown environment!");
 }
-
-})
-
-    } else{
-    }
-     
- 
-
-      async function PicOfTheDay(){
-        let response = await fetch('https://api.nasa.gov/planetary/apod?api_key=TfvhEpzDgwuJiWRluOmrJL5mv9U9IRE4M2rEaItq');
-        let data= await response.json()
-        if(data.code===404){
-            bot.sendMessage(id, data.msg)
-        }else{
-        bot.sendMessage(id, data.title+"\n"+data.explanation+'\nCopyright: '+data.copyright+'\n'+data.url )}
-
-      }
-
-
- 
-
-
-  
-})//turningBotOn
