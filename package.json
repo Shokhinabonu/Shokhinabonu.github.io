@@ -1,19 +1,19 @@
 {
-  "name": "telegrambot",
-  "version": "1.0.0",
-  "description": "",
+  "name": "AstroNow",
+  "version": "2.3.1",
+  "description": "AstroNow bot will help you learn more about astronomy, current events, and everything space-related!",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js"
   },
-  "author": "",
+  "author": "Shokhinabonu Tojieva, Artem Tkachuk",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "node-fetch": "^2.6.0",
-    "node-telegram-bot-api": "^0.50.0"
+    "telegraf": "^3.38.0"
   },
   "devDependencies": {
-    "gh-pages": "^3.1.0",
     "nodemon": "^2.0.4"
   }
 }
