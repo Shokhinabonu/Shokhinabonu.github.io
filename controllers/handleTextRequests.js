@@ -1,5 +1,5 @@
 const astronomyBrain= require('../data/AstronomyBrain');
-const sendMessage = require('../controllers/sendMessage');
+const sendMessage = require('./sendMessage');
 const picOfTheDay = require('../api/nasa');
 
 const handleTextRequests = (context) => {

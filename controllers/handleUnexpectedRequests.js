@@ -1,4 +1,4 @@
-const sendMessage = require('../controllers/sendMessage');
+const sendMessage = require('./sendMessage');
 
 const handleUnexpectedRequests = (context) => {
     //TODO implement a proper logging
