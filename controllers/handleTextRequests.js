@@ -1,5 +1,5 @@
 const astronomyBrain= require('../data/AstronomyBrain');
-const sendMessage = require('../controllers/sendMessage');
+const sendMessage = require('./sendMessage');
 const picOfTheDay = require('../api/nasa');
 
 const handleTextRequests = (context) => {
@@ -11,31 +11,31 @@ const handleTextRequests = (context) => {
             sendMessage(context, `Hello, ${context.chat.first_name}! What do you want to learn about today?`);
             break;
         case `✨The stars`:
-        case '/the-stars':
+        case '/ts':
             sendMessage(context, astronomyBrain.TheStarsText, `./img/TheStars.jpeg`);
             break;
         case `🌎The Planets`:
-        case '/the-planets':
+        case '/tp':
             sendMessage(context, astronomyBrain.ThePlanetsText, `./img/ThePlanets.jpeg`);
             break;
         case `👽Deep Space`:
-        case '/deep-space':
+        case '/ds':
             sendMessage(context, astronomyBrain.DeepSpaceText, `./img/DeepSpace.jpg`);
             break;
         case `🛰Studying the Universe`:
-        case '/studying-the-universe':
+        case '/stu':
             sendMessage(context, astronomyBrain.StudyingTheUniverseText, `./img/StudyingTheUniverse.jpg`);
             break;
         case `📡Astronomy Tools`:
-        case '/astronomy-tools':
+        case '/at':
             sendMessage(context, astronomyBrain.AstronomyToolsText, `./img/AstronomyTools.jpg`);
             break;
         case `Why Study Astronomy❓`:
-        case '/why-study-astronomy':
+        case '/wsa':
             sendMessage(context, astronomyBrain.WhyStudyAstronomyText, `./img/WhyStudyAstronomy.jpg`);
             break;
         case `🌠Nasa Picture of the Day`:
-        case '/NASA-picture-of-the-day':
+        case '/npt':
             picOfTheDay()
                 .then(NASAResponse => {
                     sendMessage(context, NASAResponse);
